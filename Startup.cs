@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text;
 using Microsoft.IdentityModel.Logging;
 using MoneyManagerApi.Middleware;
+using Newtonsoft.Json;
 
 namespace MoneyManagerApi
 {
@@ -51,9 +52,14 @@ namespace MoneyManagerApi
                 };
             });
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-            services.AddDbContext<ApplicationDbContext>
-                (options => options.UseMySql(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2).AddJsonOptions(options => {
+                options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+            });
+            services.AddDbContext<ApplicationDbContext>(options => { 
+                options.UseMySql(Configuration.GetConnectionString("DefaultConnection"));
+            });
+
+            services.AddHttpContextAccessor();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

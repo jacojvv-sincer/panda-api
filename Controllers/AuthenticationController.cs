@@ -32,7 +32,6 @@ namespace MoneyManagerApi.Controllers
         [HttpPost]
         public async Task<string> Post([FromBody] AuthenticationBinding model)
         { 
-            var a = _configuration["AzureAdB2C:Secret"];
             var response = await _client.PostAsync($"{model.url}{_configuration["AzureAdB2C:Secret"]}", null);
             return await response.Content.ReadAsStringAsync();
         }
