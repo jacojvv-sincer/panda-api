@@ -9,27 +9,23 @@ using MoneyManagerApi.Data;
 namespace MoneyManagerApi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20190317124910_InitialCreate")]
+    [Migration("20190321224213_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.2.2-servicing-10034")
+                .HasAnnotation("ProductVersion", "2.2.3-servicing-35854")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            modelBuilder.Entity("MoneyManagerApi.Models.Bucket", b =>
+            modelBuilder.Entity("MoneyManagerApi.Models.Category", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd();
-
-                    b.Property<int?>("DemarcationId");
-
-                    b.Property<decimal>("InitialValue");
 
                     b.Property<string>("Name");
 
@@ -38,12 +34,10 @@ namespace MoneyManagerApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DemarcationId");
-
-                    b.ToTable("Buckets");
+                    b.ToTable("Categories");
                 });
 
-            modelBuilder.Entity("MoneyManagerApi.Models.Demarcation", b =>
+            modelBuilder.Entity("MoneyManagerApi.Models.Location", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
@@ -51,32 +45,46 @@ namespace MoneyManagerApi.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<DateTime>("EndDate");
-
                     b.Property<string>("Name");
-
-                    b.Property<DateTime>("StartDate");
 
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAddOrUpdate();
 
-                    b.Property<Guid?>("UserId");
+                    b.HasKey("Id");
+
+                    b.ToTable("Locations");
+                });
+
+            modelBuilder.Entity("MoneyManagerApi.Models.Tag", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Name");
+
+                    b.Property<int?>("TransactionId");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAddOrUpdate();
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("TransactionId");
 
-                    b.ToTable("Demarcations");
+                    b.ToTable("Tags");
                 });
 
-            modelBuilder.Entity("MoneyManagerApi.Models.Entry", b =>
+            modelBuilder.Entity("MoneyManagerApi.Models.Transaction", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<decimal>("Amount");
 
-                    b.Property<int?>("BucketId");
+                    b.Property<int?>("CategoryId");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd();
@@ -85,16 +93,26 @@ namespace MoneyManagerApi.Migrations
 
                     b.Property<bool>("IsExtraneous");
 
-                    b.Property<string>("Name");
+                    b.Property<string>("Label");
+
+                    b.Property<int?>("LocationId");
+
+                    b.Property<string>("Note");
 
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAddOrUpdate();
 
+                    b.Property<Guid?>("UserId");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("BucketId");
+                    b.HasIndex("CategoryId");
 
-                    b.ToTable("Entries");
+                    b.HasIndex("LocationId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Transactions");
                 });
 
             modelBuilder.Entity("MoneyManagerApi.Models.User", b =>
@@ -118,25 +136,26 @@ namespace MoneyManagerApi.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("MoneyManagerApi.Models.Bucket", b =>
+            modelBuilder.Entity("MoneyManagerApi.Models.Tag", b =>
                 {
-                    b.HasOne("MoneyManagerApi.Models.Demarcation", "Demarcation")
-                        .WithMany("Buckets")
-                        .HasForeignKey("DemarcationId");
+                    b.HasOne("MoneyManagerApi.Models.Transaction")
+                        .WithMany("Tags")
+                        .HasForeignKey("TransactionId");
                 });
 
-            modelBuilder.Entity("MoneyManagerApi.Models.Demarcation", b =>
+            modelBuilder.Entity("MoneyManagerApi.Models.Transaction", b =>
                 {
+                    b.HasOne("MoneyManagerApi.Models.Category", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryId");
+
+                    b.HasOne("MoneyManagerApi.Models.Location", "Location")
+                        .WithMany()
+                        .HasForeignKey("LocationId");
+
                     b.HasOne("MoneyManagerApi.Models.User", "User")
-                        .WithMany("Demarcations")
+                        .WithMany("Transactions")
                         .HasForeignKey("UserId");
-                });
-
-            modelBuilder.Entity("MoneyManagerApi.Models.Entry", b =>
-                {
-                    b.HasOne("MoneyManagerApi.Models.Bucket", "Bucket")
-                        .WithMany("Entry")
-                        .HasForeignKey("BucketId");
                 });
 #pragma warning restore 612, 618
         }

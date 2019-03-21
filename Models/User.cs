@@ -11,6 +11,6 @@ namespace MoneyManagerApi.Models
         public string Name { get; set; }
         public string Surname { get; set; }
         public string Email { get; set; }
-        public ICollection<Demarcation> Demarcations { get; set; }
+        public ICollection<Transaction> Transactions { get; set; }
     }
 }

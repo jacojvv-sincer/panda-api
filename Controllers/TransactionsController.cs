@@ -12,22 +12,22 @@ namespace MoneyManagerApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DemarcationsController : ControllerBase
+    public class TransactionsController : ControllerBase
     {
         private ApplicationDbContext _context;
         private User _user;
 
-        public DemarcationsController(ApplicationDbContext context, IHttpContextAccessor http)
+        public TransactionsController(ApplicationDbContext context, IHttpContextAccessor http)
         {
             _context = context;
             _user = (User)http.HttpContext.Items["ApplicationUser"];
         }
 
-        // [HttpGet]
-        // public async Task<ActionResult<List<Demarcation>>> Get()
-        // {
-        //     return Ok(await _context.Demarcations.Where(d => d.User.Id == _user.Id).OrderByDescending(d => d.StartDate).ToListAsync());
-        // }
+        [HttpGet]
+        public async Task<ActionResult<List<Transaction>>> Get()
+        {
+            return Ok(await _context.Transactions.Where(d => d.User.Id == _user.Id).OrderByDescending(d => d.Date).ToListAsync());
+        }
 
         // [HttpGet]
         // [Route("latest")]
