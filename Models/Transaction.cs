@@ -10,7 +10,7 @@ namespace MoneyManagerApi.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public string Label { get; set; }
-        public string Note { get; set; }
+        public string Notes { get; set; }
         public DateTime Date { get; set; }
         public Boolean IsExtraneous { get; set; }
         [Required]

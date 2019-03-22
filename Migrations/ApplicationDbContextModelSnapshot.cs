@@ -95,7 +95,7 @@ namespace MoneyManagerApi.Migrations
 
                     b.Property<int?>("LocationId");
 
-                    b.Property<string>("Note");
+                    b.Property<string>("Notes");
 
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAddOrUpdate();

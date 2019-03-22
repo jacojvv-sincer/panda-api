@@ -9,7 +9,7 @@ using MoneyManagerApi.Data;
 namespace MoneyManagerApi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20190321224213_InitialCreate")]
+    [Migration("20190322043724_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -97,7 +97,7 @@ namespace MoneyManagerApi.Migrations
 
                     b.Property<int?>("LocationId");
 
-                    b.Property<string>("Note");
+                    b.Property<string>("Notes");
 
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAddOrUpdate();

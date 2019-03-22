@@ -71,7 +71,7 @@ namespace MoneyManagerApi.Migrations
                     UpdatedAt = table.Column<DateTime>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.ComputedColumn),
                     Label = table.Column<string>(nullable: true),
-                    Note = table.Column<string>(nullable: true),
+                    Notes = table.Column<string>(nullable: true),
                     Date = table.Column<DateTime>(nullable: false),
                     IsExtraneous = table.Column<bool>(nullable: false),
                     Amount = table.Column<decimal>(nullable: false),
