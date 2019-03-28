@@ -11,6 +11,7 @@ namespace MoneyManagerApi.Data
         public DbSet<Category> Categories { get; set; }
         public DbSet<Tag> Tags { get; set; }
         public DbSet<Location> Locations { get; set; }
+        public DbSet<Person> People { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)

@@ -103,6 +103,30 @@ namespace MoneyManagerApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "People",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    CreatedAt = table.Column<DateTime>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    UpdatedAt = table.Column<DateTime>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.ComputedColumn),
+                    Name = table.Column<string>(nullable: true),
+                    TransactionId = table.Column<int>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_People", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_People_Transactions_TransactionId",
+                        column: x => x.TransactionId,
+                        principalTable: "Transactions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Tags",
                 columns: table => new
                 {
@@ -127,6 +151,11 @@ namespace MoneyManagerApi.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_People_TransactionId",
+                table: "People",
+                column: "TransactionId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Tags_TransactionId",
                 table: "Tags",
                 column: "TransactionId");
@@ -149,6 +178,9 @@ namespace MoneyManagerApi.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "People");
+
             migrationBuilder.DropTable(
                 name: "Tags");
 

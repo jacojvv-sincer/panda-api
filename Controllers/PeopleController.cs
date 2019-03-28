@@ -12,32 +12,32 @@ namespace MoneyManagerApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CategoriesController : ControllerBase
+    public class PeopleController : ControllerBase
     {
         private ApplicationDbContext _context;
         private User _user;
 
-        public CategoriesController(ApplicationDbContext context, IHttpContextAccessor http)
+        public PeopleController(ApplicationDbContext context, IHttpContextAccessor http)
         {
             _context = context;
             _user = (User)http.HttpContext.Items["ApplicationUser"];
         }
 
         [HttpPost]
-        public async Task<ActionResult<Category>> Post([FromBody] Category category)
+        public async Task<ActionResult<Person>> Post([FromBody] Person person)
         {
             if(!ModelState.IsValid){
                 return UnprocessableEntity(ModelState);
             }
 
-            var existingCategory = await _context.Categories.Where(c => c.Name == category.Name).FirstOrDefaultAsync();
-            if(existingCategory != null){
-                return Ok(existingCategory);
+            var existingPerson = await _context.People.Where(c => c.Name == person.Name).FirstOrDefaultAsync();
+            if(existingPerson != null){
+                return Ok(existingPerson);
             }
             
-            _context.Categories.Add(category);
+            _context.People.Add(person);
             await _context.SaveChangesAsync();
-            return Ok(category);
+            return Ok(person);
         }
     }
 }

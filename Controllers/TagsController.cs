@@ -12,32 +12,32 @@ namespace MoneyManagerApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CategoriesController : ControllerBase
+    public class TagsController : ControllerBase
     {
         private ApplicationDbContext _context;
         private User _user;
 
-        public CategoriesController(ApplicationDbContext context, IHttpContextAccessor http)
+        public TagsController(ApplicationDbContext context, IHttpContextAccessor http)
         {
             _context = context;
             _user = (User)http.HttpContext.Items["ApplicationUser"];
         }
 
         [HttpPost]
-        public async Task<ActionResult<Category>> Post([FromBody] Category category)
+        public async Task<ActionResult<Tag>> Post([FromBody] Tag tag)
         {
             if(!ModelState.IsValid){
                 return UnprocessableEntity(ModelState);
             }
 
-            var existingCategory = await _context.Categories.Where(c => c.Name == category.Name).FirstOrDefaultAsync();
-            if(existingCategory != null){
-                return Ok(existingCategory);
+            var existingTag = await _context.Tags.Where(c => c.Name == tag.Name).FirstOrDefaultAsync();
+            if(existingTag != null){
+                return Ok(existingTag);
             }
             
-            _context.Categories.Add(category);
+            _context.Tags.Add(tag);
             await _context.SaveChangesAsync();
-            return Ok(category);
+            return Ok(tag);
         }
     }
 }

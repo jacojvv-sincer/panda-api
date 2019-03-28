@@ -53,6 +53,28 @@ namespace MoneyManagerApi.Migrations
                     b.ToTable("Locations");
                 });
 
+            modelBuilder.Entity("MoneyManagerApi.Models.Person", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Name");
+
+                    b.Property<int?>("TransactionId");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAddOrUpdate();
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TransactionId");
+
+                    b.ToTable("People");
+                });
+
             modelBuilder.Entity("MoneyManagerApi.Models.Tag", b =>
                 {
                     b.Property<int>("Id")
@@ -132,6 +154,13 @@ namespace MoneyManagerApi.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("MoneyManagerApi.Models.Person", b =>
+                {
+                    b.HasOne("MoneyManagerApi.Models.Transaction")
+                        .WithMany("People")
+                        .HasForeignKey("TransactionId");
                 });
 
             modelBuilder.Entity("MoneyManagerApi.Models.Tag", b =>

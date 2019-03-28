@@ -19,5 +19,6 @@ namespace MoneyManagerApi.Models
         public Category Category { get; set; }
         public Location Location { get; set; }
         public ICollection<Tag> Tags { get; set; }
+        public ICollection<Person> People { get; set; }
     }
 }
