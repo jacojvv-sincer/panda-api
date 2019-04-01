@@ -34,7 +34,6 @@ namespace MoneyManagerApi.Controllers
                 .Include(t => t.Location)
                 .Include(t => t.People)
                 .Include(t => t.Tags)
-                .GroupBy(t => t.Date)
                 .ToListAsync());
         }
 
