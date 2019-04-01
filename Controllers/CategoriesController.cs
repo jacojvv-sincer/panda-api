@@ -23,6 +23,17 @@ namespace MoneyManagerApi.Controllers
             _user = (User)http.HttpContext.Items["ApplicationUser"];
         }
 
+        [HttpGet]
+        public async Task<ActionResult<List<Category>>> Get()
+        {
+            return Ok(await _context.Transactions
+                .Where(t => t.User.Id == _user.Id)
+                .Include(t => t.Category )
+                .Select(t => t.Category)
+                .Distinct()
+                .ToListAsync());
+        }
+
         [HttpPost]
         public async Task<ActionResult<Category>> Post([FromBody] Category category)
         {
