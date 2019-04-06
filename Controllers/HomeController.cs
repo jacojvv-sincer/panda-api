@@ -22,12 +22,5 @@ namespace MoneyManagerApi.Controllers
             _context = context;
             _user = (User)http.HttpContext.Items["ApplicationUser"];
         }
-
-        [HttpGet]
-        [Route("Fuck")]
-        public async Task<ActionResult<string>> Get()
-        {
-            return Ok("Fuck");
-        }
     }
 }
