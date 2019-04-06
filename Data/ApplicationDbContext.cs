@@ -17,5 +17,10 @@ namespace MoneyManagerApi.Data
             : base(options)
         { }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<TransactionPerson>().HasKey(t => new { t.TransactionId, t.PersonId });
+            modelBuilder.Entity<TransactionTag>().HasKey(t => new { t.TransactionId, t.TagId });
+        }
     }
 }

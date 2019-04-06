@@ -23,18 +23,31 @@ namespace MoneyManagerApi.Controllers
             _user = (User)http.HttpContext.Items["ApplicationUser"];
         }
 
+        [HttpGet]
+        public async Task<ActionResult<List<Location>>> Get()
+        {
+            return Ok(await _context.Transactions
+                .Where(t => t.User.Id == _user.Id)
+                .Include(t => t.Location)
+                .Select(t => t.Location)
+                .Distinct()
+                .ToListAsync());
+        }
+
         [HttpPost]
         public async Task<ActionResult<Location>> Post([FromBody] Location location)
         {
-            if(!ModelState.IsValid){
+            if (!ModelState.IsValid)
+            {
                 return UnprocessableEntity(ModelState);
             }
 
             var existingLocation = await _context.Locations.Where(c => c.Name == location.Name).FirstOrDefaultAsync();
-            if(existingLocation != null){
+            if (existingLocation != null)
+            {
                 return Ok(existingLocation);
             }
-            
+
             _context.Locations.Add(location);
             await _context.SaveChangesAsync();
             return Ok(location);

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using MoneyManagerApi.Bindings;
 using MoneyManagerApi.Data;
 using MoneyManagerApi.Models;
 
@@ -32,13 +33,13 @@ namespace MoneyManagerApi.Controllers
                 .ThenByDescending(t => t.Id)
                 .Include(t => t.Category )
                 .Include(t => t.Location)
-                .Include(t => t.People)
-                .Include(t => t.Tags)
+                // .Include(t => t.People)
+                // .Include(t => t.Tags)
                 .ToListAsync());
         }
 
         [HttpPost]
-        public async Task<ActionResult<Transaction>> Post([FromBody] Transaction transaction)
+        public async Task<ActionResult<Transaction>> Post([FromBody] NewTransactionBinding transaction)
         {
             if (!ModelState.IsValid)
             {
@@ -62,13 +63,21 @@ namespace MoneyManagerApi.Controllers
             }
             if (transaction.People != null)
             {
-                var ids = transaction.People.Select(p => p.Id).ToArray();
-                newTransaction.People = await _context.People.Where(p => ids.Contains(p.Id)).ToListAsync();
+                List<int> peopleIds = transaction.People.Select(p => p.Id).ToList();
+                List<Person> people = await _context.People.Where(p => peopleIds.Contains(p.Id)).ToListAsync();
+                foreach (Person tag in people)
+                {
+                    _context.Add(new TransactionPerson { Transaction = newTransaction, Person = tag });
+                }
             }
             if (transaction.Tags != null)
             {
-                var ids = transaction.Tags.Select(t => t.Id).ToList();
-                newTransaction.Tags = await _context.Tags.Where(t => ids.Contains(t.Id)).ToListAsync();
+                List<int> tagIds = transaction.Tags.Select(t => t.Id).ToList();
+                List<Tag> tags = await _context.Tags.Where(t => tagIds.Contains(t.Id)).ToListAsync();
+                foreach (Tag tag in tags)
+                {
+                    _context.Add(new TransactionTag { Transaction = newTransaction, Tag = tag });
+                }
             }
 
             newTransaction.User = _user;

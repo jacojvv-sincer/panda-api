@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace MoneyManagerApi.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class InititialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -40,6 +40,40 @@ namespace MoneyManagerApi.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Locations", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "People",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    CreatedAt = table.Column<DateTime>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    UpdatedAt = table.Column<DateTime>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.ComputedColumn),
+                    Name = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_People", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Tags",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    CreatedAt = table.Column<DateTime>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    UpdatedAt = table.Column<DateTime>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.ComputedColumn),
+                    Name = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Tags", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -103,62 +137,65 @@ namespace MoneyManagerApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "People",
+                name: "TransactionPerson",
                 columns: table => new
                 {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    TransactionId = table.Column<int>(nullable: false),
+                    PersonId = table.Column<int>(nullable: false),
                     CreatedAt = table.Column<DateTime>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     UpdatedAt = table.Column<DateTime>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.ComputedColumn),
-                    Name = table.Column<string>(nullable: true),
-                    TransactionId = table.Column<int>(nullable: true)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.ComputedColumn)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_People", x => x.Id);
+                    table.PrimaryKey("PK_TransactionPerson", x => new { x.TransactionId, x.PersonId });
                     table.ForeignKey(
-                        name: "FK_People_Transactions_TransactionId",
+                        name: "FK_TransactionPerson_People_PersonId",
+                        column: x => x.PersonId,
+                        principalTable: "People",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TransactionPerson_Transactions_TransactionId",
                         column: x => x.TransactionId,
                         principalTable: "Transactions",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Tags",
+                name: "TransactionTag",
                 columns: table => new
                 {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    TransactionId = table.Column<int>(nullable: false),
+                    TagId = table.Column<int>(nullable: false),
                     CreatedAt = table.Column<DateTime>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     UpdatedAt = table.Column<DateTime>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.ComputedColumn),
-                    Name = table.Column<string>(nullable: true),
-                    TransactionId = table.Column<int>(nullable: true)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.ComputedColumn)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Tags", x => x.Id);
+                    table.PrimaryKey("PK_TransactionTag", x => new { x.TransactionId, x.TagId });
                     table.ForeignKey(
-                        name: "FK_Tags_Transactions_TransactionId",
+                        name: "FK_TransactionTag_Tags_TagId",
+                        column: x => x.TagId,
+                        principalTable: "Tags",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TransactionTag_Transactions_TransactionId",
                         column: x => x.TransactionId,
                         principalTable: "Transactions",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_People_TransactionId",
-                table: "People",
-                column: "TransactionId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Tags_TransactionId",
-                table: "Tags",
-                column: "TransactionId");
+                name: "IX_TransactionPerson_PersonId",
+                table: "TransactionPerson",
+                column: "PersonId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Transactions_CategoryId",
@@ -174,10 +211,21 @@ namespace MoneyManagerApi.Migrations
                 name: "IX_Transactions_UserId",
                 table: "Transactions",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TransactionTag_TagId",
+                table: "TransactionTag",
+                column: "TagId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "TransactionPerson");
+
+            migrationBuilder.DropTable(
+                name: "TransactionTag");
+
             migrationBuilder.DropTable(
                 name: "People");
 

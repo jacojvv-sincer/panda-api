@@ -9,8 +9,8 @@ using MoneyManagerApi.Data;
 namespace MoneyManagerApi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20190328054601_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20190406134000_InititialCreate")]
+    partial class InititialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -65,14 +65,10 @@ namespace MoneyManagerApi.Migrations
 
                     b.Property<string>("Name");
 
-                    b.Property<int?>("TransactionId");
-
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAddOrUpdate();
 
                     b.HasKey("Id");
-
-                    b.HasIndex("TransactionId");
 
                     b.ToTable("People");
                 });
@@ -87,14 +83,10 @@ namespace MoneyManagerApi.Migrations
 
                     b.Property<string>("Name");
 
-                    b.Property<int?>("TransactionId");
-
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAddOrUpdate();
 
                     b.HasKey("Id");
-
-                    b.HasIndex("TransactionId");
 
                     b.ToTable("Tags");
                 });
@@ -137,6 +129,44 @@ namespace MoneyManagerApi.Migrations
                     b.ToTable("Transactions");
                 });
 
+            modelBuilder.Entity("MoneyManagerApi.Models.TransactionPerson", b =>
+                {
+                    b.Property<int>("TransactionId");
+
+                    b.Property<int>("PersonId");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAddOrUpdate();
+
+                    b.HasKey("TransactionId", "PersonId");
+
+                    b.HasIndex("PersonId");
+
+                    b.ToTable("TransactionPerson");
+                });
+
+            modelBuilder.Entity("MoneyManagerApi.Models.TransactionTag", b =>
+                {
+                    b.Property<int>("TransactionId");
+
+                    b.Property<int>("TagId");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAddOrUpdate();
+
+                    b.HasKey("TransactionId", "TagId");
+
+                    b.HasIndex("TagId");
+
+                    b.ToTable("TransactionTag");
+                });
+
             modelBuilder.Entity("MoneyManagerApi.Models.User", b =>
                 {
                     b.Property<Guid>("Id");
@@ -158,20 +188,6 @@ namespace MoneyManagerApi.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("MoneyManagerApi.Models.Person", b =>
-                {
-                    b.HasOne("MoneyManagerApi.Models.Transaction")
-                        .WithMany("People")
-                        .HasForeignKey("TransactionId");
-                });
-
-            modelBuilder.Entity("MoneyManagerApi.Models.Tag", b =>
-                {
-                    b.HasOne("MoneyManagerApi.Models.Transaction")
-                        .WithMany("Tags")
-                        .HasForeignKey("TransactionId");
-                });
-
             modelBuilder.Entity("MoneyManagerApi.Models.Transaction", b =>
                 {
                     b.HasOne("MoneyManagerApi.Models.Category", "Category")
@@ -185,6 +201,32 @@ namespace MoneyManagerApi.Migrations
                     b.HasOne("MoneyManagerApi.Models.User", "User")
                         .WithMany("Transactions")
                         .HasForeignKey("UserId");
+                });
+
+            modelBuilder.Entity("MoneyManagerApi.Models.TransactionPerson", b =>
+                {
+                    b.HasOne("MoneyManagerApi.Models.Person", "Person")
+                        .WithMany("TransactionPeople")
+                        .HasForeignKey("PersonId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("MoneyManagerApi.Models.Transaction", "Transaction")
+                        .WithMany("TransactionPeople")
+                        .HasForeignKey("TransactionId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("MoneyManagerApi.Models.TransactionTag", b =>
+                {
+                    b.HasOne("MoneyManagerApi.Models.Tag", "Tag")
+                        .WithMany("TransactionTags")
+                        .HasForeignKey("TagId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("MoneyManagerApi.Models.Transaction", "Transaction")
+                        .WithMany("TransactionTags")
+                        .HasForeignKey("TransactionId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618
         }
