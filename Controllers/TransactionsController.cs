@@ -39,61 +39,48 @@ namespace MoneyManagerApi.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Transaction>> Post([FromBody] NewTransactionBinding transaction)
+        public async Task<ActionResult<Transaction>> Post([FromBody] TransactionBinding transaction)
         {
             if (!ModelState.IsValid)
             {
                 return UnprocessableEntity(ModelState);
             }
 
-            var newTransaction = new Transaction();
-            newTransaction.Amount = transaction.Category.Name == "Income" ? transaction.Amount : -transaction.Amount;
-            newTransaction.Date = transaction.Date;
-            newTransaction.IsExtraneous = transaction.IsExtraneous;
-            newTransaction.Label = transaction.Label;
-            newTransaction.Notes = transaction.Notes;
-
-            if (transaction.Category != null)
-            {
-                newTransaction.Category = await _context.Categories.FindAsync(transaction.Category.Id);
-            }
-            if (transaction.Location != null)
-            {
-                newTransaction.Location = await _context.Locations.FindAsync(transaction.Location.Id);
-            }
-            if (transaction.People != null)
-            {
-                List<int> peopleIds = transaction.People.Select(p => p.Id).ToList();
-                List<Person> people = await _context.People.Where(p => peopleIds.Contains(p.Id)).ToListAsync();
-                foreach (Person tag in people)
-                {
-                    _context.Add(new TransactionPerson { Transaction = newTransaction, Person = tag });
-                }
-            }
-            if (transaction.Tags != null)
-            {
-                List<int> tagIds = transaction.Tags.Select(t => t.Id).ToList();
-                List<Tag> tags = await _context.Tags.Where(t => tagIds.Contains(t.Id)).ToListAsync();
-                foreach (Tag tag in tags)
-                {
-                    _context.Add(new TransactionTag { Transaction = newTransaction, Tag = tag });
-                }
-            }
-
+            Transaction newTransaction = await SetTransactionData(new Transaction(), transaction);
             newTransaction.User = _user;
+
             _context.Transactions.Add(newTransaction);
             await _context.SaveChangesAsync();
             return Ok(newTransaction);
         }
 
+        [HttpPut]
+        public async Task<ActionResult<Transaction>> Update([FromBody] TransactionBinding transaction)
+        {
+            if (!ModelState.IsValid)
+            {
+                return UnprocessableEntity(ModelState);
+            }
+
+            Transaction transactionToUpdate = await GetUserTransactionById(transaction.Id);
+            if (transactionToUpdate == null)
+            {
+                return NotFound();
+            }
+
+            transactionToUpdate = await SetTransactionData(transactionToUpdate, transaction);
+
+            _context.Entry(transactionToUpdate).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+            return Ok(transactionToUpdate);
+        }
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            Transaction transaction = await _context.Transactions
-                                                    .Where(t => t.User.Id == _user.Id && t.Id == id)
-                                                    .FirstOrDefaultAsync();
-
-            if(transaction == null){
+            Transaction transaction = await GetUserTransactionById(id);
+            if (transaction == null)
+            {
                 return NotFound();
             }
 
@@ -102,5 +89,55 @@ namespace MoneyManagerApi.Controllers
 
             return NoContent();
         }
+
+        private async Task<Transaction> SetTransactionData(Transaction transaction, TransactionBinding details)
+        {
+            transaction.Amount = details.Category.Name == "Income" ? details.Amount : -details.Amount;
+            transaction.Date = details.Date;
+            transaction.IsExtraneous = details.IsExtraneous;
+            transaction.Label = details.Label;
+            transaction.Notes = details.Notes;
+
+            transaction.Category = details.Category != null ? await _context.Categories.FindAsync(details.Category.Id) : null;
+            transaction.Location = details.Location != null ? await _context.Locations.FindAsync(details.Location.Id) : null;
+
+            // Remove people that exist
+            if(transaction.TransactionPeople != null){
+                _context.RemoveRange(transaction.TransactionPeople);
+            }
+
+            if (details.People != null)
+            {
+                List<int> peopleIds = details.People.Select(p => p.Id).ToList();
+                List<Person> people = await _context.People.Where(p => peopleIds.Contains(p.Id)).ToListAsync();
+                foreach (Person tag in people)
+                {
+                    _context.Add(new TransactionPerson { Transaction = transaction, Person = tag });
+                }
+            }
+
+            // Remove tags that exist
+            if(transaction.TransactionTags != null){
+                _context.RemoveRange(transaction.TransactionTags);
+            }
+            
+            if (details.Tags != null)
+            {
+                List<int> tagIds = details.Tags.Select(t => t.Id).ToList();
+                List<Tag> tags = await _context.Tags.Where(t => tagIds.Contains(t.Id)).ToListAsync();
+                foreach (Tag tag in tags)
+                {
+                    _context.Add(new TransactionTag { Transaction = transaction, Tag = tag });
+                }
+            }
+
+            return transaction;
+        }
+
+        private async Task<Transaction> GetUserTransactionById(int id)
+        {
+            return await _context.Transactions.Where(t => t.User.Id == _user.Id && t.Id == id).FirstOrDefaultAsync();
+        }
+
     }
 }

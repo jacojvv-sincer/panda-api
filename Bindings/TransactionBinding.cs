@@ -4,7 +4,7 @@ using MoneyManagerApi.Models;
 
 namespace MoneyManagerApi.Bindings
 {
-    public class NewTransactionBinding : Transaction
+    public class TransactionBinding : Transaction
     {
         public ICollection<Tag> Tags { get; set; }
 
