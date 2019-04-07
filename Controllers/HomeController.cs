@@ -22,5 +22,10 @@ namespace MoneyManagerApi.Controllers
             _context = context;
             _user = (User)http.HttpContext.Items["ApplicationUser"];
         }
+
+        [HttpGet]
+        public string index(){
+            return "Hello";
+        }
     }
 }
