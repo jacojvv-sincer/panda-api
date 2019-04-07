@@ -30,6 +30,7 @@ namespace MoneyManagerApi.Controllers
                 .Where(t => t.User.Id == _user.Id)
                 .Include(t => t.Location)
                 .Select(t => t.Location)
+                .OrderBy(l => l.Name)
                 .Distinct()
                 .ToListAsync());
         }

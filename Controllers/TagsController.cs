@@ -31,7 +31,8 @@ namespace MoneyManagerApi.Controllers
                 .Include(t => t.TransactionTags)
                 .ThenInclude(t => t.Tag)
                 .Select(t => t.TransactionTags.Select(x => x.Tag)) // get the tags
-                .SelectMany(p => p) // flatten
+                .SelectMany(t => t) // flatten
+                .OrderBy(t => t.Name)
                 .Distinct()
                 .ToListAsync();
 

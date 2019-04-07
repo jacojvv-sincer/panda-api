@@ -31,6 +31,7 @@ namespace MoneyManagerApi.Controllers
                 .Include(t => t.TransactionPeople)
                 .Select(t => t.TransactionPeople.Select(x => x.Person))
                 .SelectMany(p => p) // flatten
+                .OrderBy(p => p.Name)
                 .Distinct()
                 .ToListAsync();
 
