@@ -31,7 +31,7 @@ namespace MoneyManagerApi.Controllers
                 .Where(t => t.User.Id == _user.Id)
                 .OrderByDescending(t => t.Date)
                 .ThenByDescending(t => t.Id)
-                .Include(t => t.Category )
+                .Include(t => t.Category)
                 .Include(t => t.Location)
                 // .Include(t => t.People)
                 // .Include(t => t.Tags)
@@ -86,5 +86,21 @@ namespace MoneyManagerApi.Controllers
             return Ok(newTransaction);
         }
 
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            Transaction transaction = await _context.Transactions
+                                                    .Where(t => t.User.Id == _user.Id && t.Id == id)
+                                                    .FirstOrDefaultAsync();
+
+            if(transaction == null){
+                return NotFound();
+            }
+
+            _context.Transactions.Remove(transaction);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
     }
 }
