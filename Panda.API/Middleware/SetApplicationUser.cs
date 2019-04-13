@@ -28,7 +28,7 @@ namespace Panda.API.Middleware
                 var name = context.User.Claims.Where(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname").First().Value;
                 var surname = context.User.Claims.Where(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname").First().Value;
 
-                User user = await dbContext.Users.Where(u => u.Id == userId).FirstOrDefaultAsync();
+                User user = await dbContext.Users.Where(u => u.Id == new Guid(userId.ToString())).FirstOrDefaultAsync();
                 if (user == null)
                 {
                     user = new User();
