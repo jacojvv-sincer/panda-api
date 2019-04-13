@@ -9,7 +9,12 @@ dotnet restore
 
 ```bash
 # Copy app settings for development (Remember to add details after copy)
-cp appsettings.json appsettings.Development.json
+cp appsettings.Development.example.json appsettings.Development.json
+```
+
+```bash
+# Copy app settings for production (Remember to add details after copy)
+cp appsettings.example.json appsettings.json
 ```
 
 ```bash

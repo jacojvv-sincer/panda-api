@@ -1,0 +1,3 @@
+appsettings.*
+!appsettings.example.json
+!appsettings.Development.example.json

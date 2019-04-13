@@ -1,0 +1,23 @@
+{
+  "ConnectionStrings": {
+    "DefaultConnection": ""
+  },
+  "AzureAdB2C": {
+    "Tenant": "",
+    "ClientId": "",
+    "IssuerDomain": "",
+    "IssuerId": "",
+    "Policy": "",
+    "ScopeRead": "",
+    "ScopeWrite": "",
+    "Secret": ""
+  },
+  "AllowedHosts": "*",
+  "Logging": {
+    "LogLevel": {
+      "Default": "Debug",
+      "System": "Information",
+      "Microsoft": "Information"
+    }
+  }
+}
