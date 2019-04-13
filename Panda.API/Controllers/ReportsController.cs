@@ -39,14 +39,17 @@ namespace Panda.API.Controllers
 
         [HttpGet]
         [Route("Burndown")]
-        public async Task<ActionResult> Burndown(){
-            DateTime date = DateTime.Today.AddDays(-30);
+        public async Task<ActionResult> Burndown([FromQuery] int days = 30){
+            days = days > 730 ? 730 : days;
+            days = days < 0 ? 30 : days;
+
+            DateTime date = DateTime.Today.AddDays(-days);
             var balance = _context.Transactions.Where(t => t.User.Id == _user.Id && t.Date <= date).Sum(t => t.Amount);
             var transactions = await _context.Transactions.Where(t => t.User.Id == _user.Id && t.Date > date).ToListAsync();
 
             List<BurndownValues> values = new List<BurndownValues>();
 
-            for (int i = 0; i < 30; i++)
+            for (int i = 0; i < days; i++)
             {
                 date = date.AddDays(1);
                 balance = balance + transactions.Where(t => t.Date == date).Sum(t => t.Amount);
@@ -55,7 +58,6 @@ namespace Panda.API.Controllers
                     Total = balance 
                 });
             }
-
 
             return Ok(values);
         }
