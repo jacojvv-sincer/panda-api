@@ -35,8 +35,6 @@ namespace Panda.API.Controllers
             public Decimal Total { get; set; }
         }
 
-
-
         [HttpGet]
         [Route("Burndown")]
         public async Task<ActionResult> Burndown([FromQuery] int days = 30){
@@ -61,6 +59,5 @@ namespace Panda.API.Controllers
 
             return Ok(values);
         }
-
     }
 }

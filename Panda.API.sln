@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.28803.156
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Panda.API", "Panda.API\Panda.API.csproj", "{7A991E48-A9D3-4E48-9966-C64313775617}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Panda.API", "Panda.API\Panda.API.csproj", "{7A991E48-A9D3-4E48-9966-C64313775617}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Panda.API.Contracts", "Panda.API.Contracts\Panda.API.Contracts.csproj", "{3A1B7837-8A81-46E9-96A9-52B324187AF1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Panda.API.Contracts", "Panda.API.Contracts\Panda.API.Contracts.csproj", "{3A1B7837-8A81-46E9-96A9-52B324187AF1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Panda.API.ViewModels", "Panda.API.ViewModels\Panda.API.ViewModels.csproj", "{E3F7EC38-A6D8-4060-9F02-2D9153DDD249}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{3A1B7837-8A81-46E9-96A9-52B324187AF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3A1B7837-8A81-46E9-96A9-52B324187AF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3A1B7837-8A81-46E9-96A9-52B324187AF1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E3F7EC38-A6D8-4060-9F02-2D9153DDD249}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E3F7EC38-A6D8-4060-9F02-2D9153DDD249}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E3F7EC38-A6D8-4060-9F02-2D9153DDD249}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E3F7EC38-A6D8-4060-9F02-2D9153DDD249}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

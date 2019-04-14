@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Panda.API.Data;
 using Panda.API.Models;
+using Panda.API.ViewModels;
 
 namespace Panda.API.Controllers
 {
@@ -28,7 +29,7 @@ namespace Panda.API.Controllers
         {
             return Ok(await _context.Transactions
                 .Where(t => t.User.Id == _user.Id)
-                .Include(t => t.Category )
+                .Include(t => t.Category)
                 .Select(t => t.Category)
                 .OrderBy(c => c.Name)
                 .Distinct()
@@ -38,18 +39,42 @@ namespace Panda.API.Controllers
         [HttpPost]
         public async Task<ActionResult<Category>> Post([FromBody] Category category)
         {
-            if(!ModelState.IsValid){
+            if (!ModelState.IsValid)
+            {
                 return UnprocessableEntity(ModelState);
             }
 
             var existingCategory = await _context.Categories.Where(c => c.Name == category.Name).FirstOrDefaultAsync();
-            if(existingCategory != null){
+            if (existingCategory != null)
+            {
                 return Ok(existingCategory);
             }
-            
+
             _context.Categories.Add(category);
             await _context.SaveChangesAsync();
             return Ok(category);
+        }
+
+        [HttpGet]
+        [Route("{id}/Analytics")]
+        public async Task<RelationAnalyticsViewModel> Analytics(int id)
+        {
+            IQueryable<Transaction> transactions = _context.Transactions.Where(t => t.User.Id == _user.Id && t.Category.Id == id);
+
+            int lifetimeCount = await transactions.CountAsync();
+            decimal lifetimeTotal = await transactions.Select(t => t.Amount).SumAsync();
+            int monthCount = await transactions.Where(t => t.Date > DateTime.Now.AddDays(-30)).CountAsync();
+            decimal monthTotal = await transactions.Where(t => t.Date > DateTime.Now.AddDays(-30)).Select(t => t.Amount).SumAsync();
+
+            return new RelationAnalyticsViewModel()
+            {
+                LifetimeTotalTransactions = lifetimeCount,
+                LifetimeSumOfTransactions = lifetimeTotal,
+                LifetimeAveragePerTransaction = lifetimeTotal / lifetimeCount,
+                MonthTotalTransactions = monthCount,
+                MonthSumOfTransactions = monthTotal,
+                MonthAveragePerTransaction = monthTotal / monthCount
+            };
         }
     }
 }
