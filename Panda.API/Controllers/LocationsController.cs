@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Panda.API.Data;
 using Panda.API.Models;
+using Panda.API.ViewModels;
 
 namespace Panda.API.Controllers
 {
@@ -52,6 +53,28 @@ namespace Panda.API.Controllers
             _context.Locations.Add(location);
             await _context.SaveChangesAsync();
             return Ok(location);
+        }
+
+        [HttpGet]
+        [Route("{id}/Analytics")]
+        public async Task<RelationAnalyticsViewModel> Analytics(int id)
+        {
+            IQueryable<Transaction> transactions = _context.Transactions.Where(t => t.User.Id == _user.Id && t.Location.Id == id);
+
+            int lifetimeCount = await transactions.CountAsync();
+            decimal lifetimeTotal = await transactions.Select(t => t.Amount).SumAsync();
+            int monthCount = await transactions.Where(t => t.Date > DateTime.Now.AddDays(-30)).CountAsync();
+            decimal monthTotal = await transactions.Where(t => t.Date > DateTime.Now.AddDays(-30)).Select(t => t.Amount).SumAsync();
+
+            return new RelationAnalyticsViewModel()
+            {
+                LifetimeTotalTransactions = lifetimeCount,
+                LifetimeSumOfTransactions = lifetimeTotal,
+                LifetimeAveragePerTransaction = lifetimeTotal / lifetimeCount,
+                MonthTotalTransactions = monthCount,
+                MonthSumOfTransactions = monthTotal,
+                MonthAveragePerTransaction = monthTotal / monthCount
+            };
         }
     }
 }
