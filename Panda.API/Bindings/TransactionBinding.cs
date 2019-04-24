@@ -1,6 +1,5 @@
-using System;
-using System.Collections.Generic;
 using Panda.API.Models;
+using System.Collections.Generic;
 
 namespace Panda.API.Bindings
 {

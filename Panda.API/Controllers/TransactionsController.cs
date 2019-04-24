@@ -1,13 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Panda.API.Bindings;
 using Panda.API.Data;
 using Panda.API.Models;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Panda.API.Controllers
 {
@@ -102,7 +101,8 @@ namespace Panda.API.Controllers
             transaction.Location = details.Location != null ? await _context.Locations.FindAsync(details.Location.Id) : null;
 
             // Remove people that exist
-            if(transaction.TransactionPeople != null){
+            if (transaction.TransactionPeople != null)
+            {
                 _context.RemoveRange(transaction.TransactionPeople);
             }
 
@@ -117,10 +117,11 @@ namespace Panda.API.Controllers
             }
 
             // Remove tags that exist
-            if(transaction.TransactionTags != null){
+            if (transaction.TransactionTags != null)
+            {
                 _context.RemoveRange(transaction.TransactionTags);
             }
-            
+
             if (details.Tags != null)
             {
                 List<int> tagIds = details.Tags.Select(t => t.Id).ToList();
@@ -138,6 +139,5 @@ namespace Panda.API.Controllers
         {
             return await _context.Transactions.Where(t => t.User.Id == _user.Id && t.Id == id).FirstOrDefaultAsync();
         }
-
     }
 }

@@ -1,13 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Panda.API.Data;
 using Panda.API.Models;
 using Panda.API.ViewModels;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Panda.API.Controllers
 {
@@ -42,15 +42,17 @@ namespace Panda.API.Controllers
         [HttpPost]
         public async Task<ActionResult<Person>> Post([FromBody] Person person)
         {
-            if(!ModelState.IsValid){
+            if (!ModelState.IsValid)
+            {
                 return UnprocessableEntity(ModelState);
             }
 
             var existingPerson = await _context.People.Where(c => c.Name == person.Name).FirstOrDefaultAsync();
-            if(existingPerson != null){
+            if (existingPerson != null)
+            {
                 return Ok(existingPerson);
             }
-            
+
             _context.People.Add(person);
             await _context.SaveChangesAsync();
             return Ok(person);
@@ -60,7 +62,6 @@ namespace Panda.API.Controllers
         [Route("{id}/Analytics")]
         public async Task<RelationAnalyticsViewModel> Analytics(int id)
         {
-
             IQueryable<Transaction> transactions = _context.Transactions.Where(t => t.User.Id == _user.Id && t.TransactionPeople.Where(p => p.Person.Id == id).Any());
 
             int lifetimeCount = await transactions.CountAsync();
@@ -72,10 +73,10 @@ namespace Panda.API.Controllers
             {
                 LifetimeTotalTransactions = lifetimeCount,
                 LifetimeSumOfTransactions = lifetimeTotal,
-                LifetimeAveragePerTransaction = lifetimeTotal / lifetimeCount,
+                LifetimeAveragePerTransaction = lifetimeCount > 0 ? lifetimeTotal / lifetimeCount : 0,
                 MonthTotalTransactions = monthCount,
                 MonthSumOfTransactions = monthTotal,
-                MonthAveragePerTransaction = monthTotal / monthCount
+                MonthAveragePerTransaction = monthCount > 0 ? monthTotal / monthCount : 0
             };
         }
     }

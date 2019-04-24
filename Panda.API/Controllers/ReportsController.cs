@@ -1,12 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Panda.API.Data;
 using Panda.API.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Panda.API.Controllers
 {
@@ -25,19 +25,22 @@ namespace Panda.API.Controllers
 
         [HttpGet]
         [Route("Balance")]
-        public ActionResult<decimal> Balance(){
+        public ActionResult<decimal> Balance()
+        {
             return Ok(_context.Transactions.Where(t => t.User.Id == _user.Id).Sum(t => t.Amount));
         }
 
         // todo : move somewhere else
-        public class BurndownValues {
+        public class BurndownValues
+        {
             public DateTime Date { get; set; }
             public Decimal Total { get; set; }
         }
 
         [HttpGet]
         [Route("Burndown")]
-        public async Task<ActionResult> Burndown([FromQuery] int days = 30){
+        public async Task<ActionResult> Burndown([FromQuery] int days = 30)
+        {
             days = days > 730 ? 730 : days;
             days = days < 0 ? 30 : days;
 
@@ -51,9 +54,10 @@ namespace Panda.API.Controllers
             {
                 date = date.AddDays(1);
                 balance = balance + transactions.Where(t => t.Date == date).Sum(t => t.Amount);
-                values.Add(new BurndownValues{
+                values.Add(new BurndownValues
+                {
                     Date = date,
-                    Total = balance 
+                    Total = balance
                 });
             }
 

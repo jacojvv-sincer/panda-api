@@ -1,13 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Panda.API.Data;
 using Panda.API.Models;
 using Panda.API.ViewModels;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Panda.API.Controllers
 {
@@ -70,10 +70,10 @@ namespace Panda.API.Controllers
             {
                 LifetimeTotalTransactions = lifetimeCount,
                 LifetimeSumOfTransactions = lifetimeTotal,
-                LifetimeAveragePerTransaction = lifetimeTotal / lifetimeCount,
+                LifetimeAveragePerTransaction = lifetimeCount > 0 ? lifetimeTotal / lifetimeCount : 0,
                 MonthTotalTransactions = monthCount,
                 MonthSumOfTransactions = monthTotal,
-                MonthAveragePerTransaction = monthTotal / monthCount
+                MonthAveragePerTransaction = monthCount > 0 ? monthTotal / monthCount : 0
             };
         }
     }

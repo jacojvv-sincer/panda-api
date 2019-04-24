@@ -1,7 +1,5 @@
 using Panda.API.Contracts;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Panda.API.Models
 {

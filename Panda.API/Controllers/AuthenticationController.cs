@@ -1,13 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using Panda.API.Models;
 using System.Net.Http;
-using System.Web;
+using System.Threading.Tasks;
 
 namespace Panda.API.Controllers
 {
@@ -31,7 +25,7 @@ namespace Panda.API.Controllers
 
         [HttpPost]
         public async Task<string> Post([FromBody] AuthenticationBinding model)
-        { 
+        {
             var response = await _client.PostAsync($"{model.url}{_configuration["AzureAdB2C:Secret"]}", null);
             return await response.Content.ReadAsStringAsync();
         }
