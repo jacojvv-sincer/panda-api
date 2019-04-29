@@ -17,6 +17,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Panda.API.Contracts\Panda.API.Contracts.csproj" />
     <ProjectReference Include="..\Panda.API.Data\Panda.API.Data.csproj" />
+    <ProjectReference Include="..\Panda.Api.Helpers\Panda.Api.Helpers.csproj" />
     <ProjectReference Include="..\Panda.API.ViewModels\Panda.API.ViewModels.csproj" />
   </ItemGroup>
 

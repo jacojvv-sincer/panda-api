@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Panda.API.ViewModels", "Pan
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Panda.API.Data", "Panda.API.Data\Panda.API.Data.csproj", "{68E20469-4A31-4742-B678-754C1D1CDE7E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Panda.Api.Helpers", "Panda.Api.Helpers\Panda.Api.Helpers.csproj", "{CECD2183-6B1C-4762-8B9E-43A040049462}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{68E20469-4A31-4742-B678-754C1D1CDE7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{68E20469-4A31-4742-B678-754C1D1CDE7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{68E20469-4A31-4742-B678-754C1D1CDE7E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CECD2183-6B1C-4762-8B9E-43A040049462}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CECD2183-6B1C-4762-8B9E-43A040049462}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CECD2183-6B1C-4762-8B9E-43A040049462}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CECD2183-6B1C-4762-8B9E-43A040049462}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

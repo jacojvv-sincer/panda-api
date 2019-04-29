@@ -34,10 +34,12 @@ namespace Panda.API
                 jwtOptions.Authority = $"https://login.microsoftonline.com/tfp/{Configuration["AzureAdB2C:Tenant"]}/{Configuration["AzureAdB2C:Policy"]}/v2.0/";
                 jwtOptions.Audience = Configuration["AzureAdB2C:ClientId"];
                 jwtOptions.TokenValidationParameters.ValidIssuer = $"https://{Configuration["AzureAdB2C:IssuerDomain"]}/{Configuration["AzureAdB2C:IssuerId"]}/v2.0/";
+#if DEBUG
                 jwtOptions.Events = new JwtBearerEvents
                 {
                     OnAuthenticationFailed = AuthenticationFailed
                 };
+#endif
             });
 
             services.AddDbContext<ApplicationDbContext>(options =>

@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Panda.API.Bindings;
 using Panda.API.Data;
 using Panda.API.Data.Models;
+using Panda.API.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -24,17 +26,28 @@ namespace Panda.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Transaction>>> Get()
+        public async Task<ActionResult<PaginatedContentViewModel<Transaction>>> Get([FromQuery]int page = 1, [FromQuery]int perPage = 30)
         {
-            return Ok(await _context.Transactions
-                .Where(t => t.User.Id == _user.Id)
-                .OrderByDescending(t => t.Date)
-                .ThenByDescending(t => t.Id)
-                .Include(t => t.Category)
-                .Include(t => t.Location)
-                // .Include(t => t.People)
-                // .Include(t => t.Tags)
-                .ToListAsync());
+            IQueryable<Transaction> baseQuery = _context.Transactions.Where(t => t.User.Id == _user.Id);
+            IQueryable<Transaction> query = baseQuery.OrderByDescending(t => t.Date)
+                                                     .ThenByDescending(t => t.Id)
+                                                     .Include(t => t.Category)
+                                                     .Include(t => t.Location)
+                                                     .Skip((page - 1) * perPage)
+                                                     .Take(perPage);
+
+            // more query logic to follow - hence UnixTimeHelper.cs
+
+            int totalItems = await baseQuery.CountAsync();
+            List<Transaction> items = await query.ToListAsync();
+
+            return Ok(new PaginatedContentViewModel<Transaction>()
+            {
+                Items = items,
+                Page = page,
+                TotalItems = totalItems,
+                TotalPages = Convert.ToInt32(Math.Round(totalItems / (double)perPage, MidpointRounding.AwayFromZero))
+            });
         }
 
         [HttpPost]
