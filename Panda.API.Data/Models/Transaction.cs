@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Panda.API.Models
+namespace Panda.API.Data.Models
 {
     public class Transaction : ITimestamps
     {

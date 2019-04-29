@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Panda.API.Data;
-using Panda.API.Models;
+using Panda.API.Data.Models;
 
 namespace Panda.API.Controllers
 {

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Panda.API.Bindings;
 using Panda.API.Data;
-using Panda.API.Models;
+using Panda.API.Data.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;

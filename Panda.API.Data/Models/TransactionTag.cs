@@ -1,7 +1,7 @@
 using Panda.API.Contracts;
 using System;
 
-namespace Panda.API.Models
+namespace Panda.API.Data.Models
 {
     public class TransactionTag : ITimestamps
     {

@@ -1,17 +1,15 @@
 using Panda.API.Contracts;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Panda.API.Models
+namespace Panda.API.Data.Models
 {
-    public class Tag : ITimestamps
+    public class Category : ITimestamps
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         public string Name { get; set; }
-        public ICollection<TransactionTag> TransactionTags { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
     }

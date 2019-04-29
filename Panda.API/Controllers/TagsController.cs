@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Panda.API.Data;
-using Panda.API.Models;
+using Panda.API.Data.Models;
 using Panda.API.ViewModels;
 using System;
 using System.Collections.Generic;

@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Panda.API.Data;
-using Panda.API.Models;
+using Panda.API.Data.Models;
 using System;
 using System.Linq;
 using System.Threading.Tasks;

@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Panda.API.Models;
+using Panda.API.Data.Models;
 
 namespace Panda.API.Controllers
 {

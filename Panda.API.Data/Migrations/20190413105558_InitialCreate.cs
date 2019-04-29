@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Migrations;
 using System;
 
-namespace Panda.API.Migrations
+namespace Panda.API.Data.Migrations
 {
     public partial class InitialCreate : Migration
     {

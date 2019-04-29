@@ -1,4 +1,4 @@
-using Panda.API.Models;
+using Panda.API.Data.Models;
 using System.Collections.Generic;
 
 namespace Panda.API.Bindings

@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Panda.API.Contracts;
-using Panda.API.Models;
+using Panda.API.Data.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;

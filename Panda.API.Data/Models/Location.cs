@@ -2,7 +2,7 @@ using Panda.API.Contracts;
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Panda.API.Models
+namespace Panda.API.Data.Models
 {
     public class Location : ITimestamps
     {
