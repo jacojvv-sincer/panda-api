@@ -6,6 +6,6 @@ namespace Panda.API.DataTransferObjects
     {
         public DateTime Date { get; set; }
         public string Category { get; set; }
-        public decimal Amount { get; set; }
+        public string Amount { get; set; }
     }
 }

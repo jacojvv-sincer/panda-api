@@ -49,11 +49,13 @@ namespace Panda.API.Controllers
                             category = await _context.Categories.Where(c => c.Name == r.Category).FirstOrDefaultAsync();
                         }
 
+                        decimal amount = Convert.ToDecimal(r.Amount.Trim().Replace(",", "."));
+
                         Transaction transaction = new Transaction()
                         {
                             IsExtraneous = false,
                             User = _user,
-                            Amount = r.Category == "Income" ? r.Amount : -r.Amount,
+                            Amount = r.Category == "Income" ? amount : -amount,
                             Date = r.Date,
                             Category = category
                         };
