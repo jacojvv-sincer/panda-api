@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Panda.API.Data;
 using Panda.API.Data.Models;
+using Panda.API.Interfaces;
 using Panda.API.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -17,23 +18,20 @@ namespace Panda.API.Controllers
     {
         private ApplicationDbContext _context;
         private User _user;
+        private ICategoryService _categoryService;
 
-        public CategoriesController(ApplicationDbContext context, IHttpContextAccessor http)
+        public CategoriesController(ApplicationDbContext context, IHttpContextAccessor http, ICategoryService categoryService)
         {
             _context = context;
             _user = (User)http.HttpContext.Items["ApplicationUser"];
+            _categoryService = categoryService;
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Category>>> Get()
+        public async Task<ActionResult<List<CategoryViewModel>>> Get()
         {
-            return Ok(await _context.Transactions
-                .Where(t => t.User.Id == _user.Id)
-                .Include(t => t.Category)
-                .Select(t => t.Category)
-                .OrderBy(c => c.Name)
-                .Distinct()
-                .ToListAsync());
+            var categories = await _categoryService.GetCategoriesForUserTransactions(_user.Id);
+            return Ok(AutoMapper.Mapper.Map<CategoryViewModel>(categories));
         }
 
         [HttpPost]

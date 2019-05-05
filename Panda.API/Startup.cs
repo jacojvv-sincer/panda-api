@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -7,7 +8,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using Panda.API.Data;
+using Panda.API.Interfaces;
+using Panda.API.Mappings;
 using Panda.API.Middleware;
+using Panda.API.Services;
+using System;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -48,6 +53,12 @@ namespace Panda.API
             });
 
             services.AddHttpContextAccessor();
+
+            Mapper.Initialize(config => config.AddProfile<MappingProfile>());
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+            services.AddScoped<ITransactionService, TransactionService>();
+            services.AddScoped<ICategoryService, CategoryService>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2).AddJsonOptions(options =>
             {

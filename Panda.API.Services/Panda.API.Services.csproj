@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
@@ -6,6 +6,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Panda.API.Data\Panda.API.Data.csproj" />
+    <ProjectReference Include="..\Panda.API.Exceptions\Panda.API.Exceptions.csproj" />
+    <ProjectReference Include="..\Panda.API.Interfaces\Panda.API.Interfaces.csproj" />
   </ItemGroup>
 
 </Project>

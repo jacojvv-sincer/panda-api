@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="6.1.0" />
     <PackageReference Include="CsvHelper" Version="12.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
@@ -13,14 +14,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Bindings\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Panda.API.Contracts\Panda.API.Contracts.csproj" />
     <ProjectReference Include="..\Panda.API.DataTransferObjects\Panda.API.DataTransferObjects.csproj" />
-    <ProjectReference Include="..\Panda.API.Data\Panda.API.Data.csproj" />
     <ProjectReference Include="..\Panda.Api.Helpers\Panda.Api.Helpers.csproj" />
+    <ProjectReference Include="..\Panda.API.Interfaces\Panda.API.Interfaces.csproj" />
+    <ProjectReference Include="..\Panda.API.Mappings\Panda.API.Mappings.csproj" />
+    <ProjectReference Include="..\Panda.API.Services\Panda.API.Services.csproj" />
     <ProjectReference Include="..\Panda.API.ViewModels\Panda.API.ViewModels.csproj" />
   </ItemGroup>
 

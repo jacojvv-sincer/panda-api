@@ -1,9 +1,9 @@
-using Panda.API.Data.Models;
+﻿using Panda.API.Data.Models;
 using System.Collections.Generic;
 
-namespace Panda.API.Bindings
+namespace Panda.API.ViewModels
 {
-    public class TransactionBinding : Transaction
+    public class AddTransactionViewModel : Transaction
     {
         public ICollection<Tag> Tags { get; set; }
 
