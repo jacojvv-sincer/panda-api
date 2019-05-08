@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Panda.API.Data;
 using Panda.API.Data.Models;
+using Panda.API.Exceptions;
 using Panda.API.ViewModels;
 using System;
 using System.Linq;
@@ -168,6 +169,12 @@ namespace Panda.API.Services.Tests
             await _transactionService.DeleteTransaction(userId, userTransaction.Id);
             var transaction = await _transactionService.GetUserTransactionById(userId, userTransaction.Id);
             Assert.IsNull(transaction);
+        }
+
+        [TestMethod]
+        public async Task DeleteTransaction_Should_ThrowATransactionNotFoundExceptionWhenATransactionDoesNotExist()
+        {
+            await Assert.ThrowsExceptionAsync<TransactionNotFoundException>(async () => await _transactionService.DeleteTransaction(userId, 900));
         }
     }
 }

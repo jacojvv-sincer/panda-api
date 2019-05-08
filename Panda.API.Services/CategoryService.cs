@@ -33,5 +33,23 @@ namespace Panda.API.Services
                 .Distinct()
                 .ToListAsync();
         }
+
+        /// <summary>
+        /// Creates a new category and returns
+        ///
+        /// Will return a previously existing category if the category already exists
+        /// </summary>
+        /// <param name="category">The category to add</param>
+        /// <returns></returns>
+        public async Task<Category> CreateCategory(Category category)
+        {
+            var existingCategory = await _context.Categories.Where(c => c.Name == category.Name).FirstOrDefaultAsync();
+            if (existingCategory != null)
+                return existingCategory;
+
+            _context.Categories.Add(category);
+            await _context.SaveChangesAsync();
+            return category;
+        }
     }
 }

@@ -59,6 +59,11 @@ namespace Panda.API
 
             services.AddScoped<ITransactionService, TransactionService>();
             services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<ILocationService, LocationService>();
+            services.AddScoped<IPersonService, PersonService>();
+            services.AddScoped<ITagService, TagService>();
+            services.AddScoped<IReportService, ReportService>();
+            services.AddScoped<IRelationAnalyticsService, RelationAnalyticsService>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2).AddJsonOptions(options =>
             {

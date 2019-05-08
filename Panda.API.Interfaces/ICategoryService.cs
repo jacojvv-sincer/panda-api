@@ -8,5 +8,7 @@ namespace Panda.API.Interfaces
     public interface ICategoryService
     {
         Task<List<Category>> GetCategoriesForUserTransactions(Guid userId);
+
+        Task<Category> CreateCategory(Category category);
     }
 }

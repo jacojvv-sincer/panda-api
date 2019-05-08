@@ -9,15 +9,15 @@ using System.Threading.Tasks;
 namespace Panda.API.Services.Tests
 {
     [TestClass]
-    public class CategoryServiceTests
+    public class TagServiceTests
     {
         private ApplicationDbContext _applicationDbContext { get; set; }
-        private CategoryService _categoryService { get; set; }
+        private TagService _tagService { get; set; }
 
         private User user;
         private static Guid userId = Guid.NewGuid();
         private Transaction userTransaction;
-        private Category groceriesCategory;
+        private Tag greenTag;
 
         [TestInitialize]
         public void Setup()
@@ -27,8 +27,8 @@ namespace Panda.API.Services.Tests
             _applicationDbContext = new ApplicationDbContext(optionsBuilder.Options);
 
             // Setup groceries category
-            groceriesCategory = new Category() { Name = "Groceries" };
-            _applicationDbContext.Categories.Add(groceriesCategory);
+            greenTag = new Tag() { Name = "Green" };
+            _applicationDbContext.Tags.Add(greenTag);
 
             // user setup
             user = new User()
@@ -39,15 +39,16 @@ namespace Panda.API.Services.Tests
             userTransaction = new Transaction()
             {
                 User = user,
-                Amount = -12,
-                Category = groceriesCategory
+                Amount = -12
             };
             _applicationDbContext.Transactions.Add(userTransaction);
+
+            _applicationDbContext.Add(new TransactionTag { Transaction = userTransaction, Tag = greenTag });
 
             //Save changes
             _applicationDbContext.SaveChanges();
 
-            _categoryService = new CategoryService(_applicationDbContext);
+            _tagService = new TagService(_applicationDbContext);
         }
 
         [TestCleanup]
@@ -57,25 +58,25 @@ namespace Panda.API.Services.Tests
         }
 
         [TestMethod]
-        public async Task GetCategoriesForUserTransactions_Should_ReturnAllCategoriesForUserTransactions()
+        public async Task GetTagsForUserTransactions_Should_ReturnAllTagsForUserTransactions()
         {
-            var categories = await _categoryService.GetCategoriesForUserTransactions(userId);
-            Assert.AreEqual(1, categories.Count);
-            Assert.AreEqual("Groceries", categories.First().Name);
+            var tags = await _tagService.GetTagsForUserTransactions(userId);
+            Assert.AreEqual(1, tags.Count);
+            Assert.AreEqual("Green", tags.First().Name);
         }
 
         [TestMethod]
-        public async Task CreateCategory_Should_PersistTheCategoryToTheDatabase()
+        public async Task CreateTag_Should_PersistTheTagToTheDatabase()
         {
-            var category = await _categoryService.CreateCategory(new Category() { Name = "NewCategory" });
-            Assert.AreEqual(1, _applicationDbContext.Categories.Where(c => c.Name == "NewCategory").Count());
+            var tag = await _tagService.CreateTag(new Tag() { Name = "RandomTagName" });
+            Assert.AreEqual(1, _applicationDbContext.Tags.Where(c => c.Name == "RandomTagName").Count());
         }
 
         [TestMethod]
-        public async Task CreateCategory_Should_ReturnExistingCategoriesUponSameCreation()
+        public async Task CreateTag_Should_ReturnExistingTagsUponSameCreation()
         {
-            var category = await _categoryService.CreateCategory(groceriesCategory);
-            Assert.AreEqual(category.Id, groceriesCategory.Id);
+            var tag = await _tagService.CreateTag(greenTag);
+            Assert.AreEqual(tag.Id, greenTag.Id);
         }
     }
 }

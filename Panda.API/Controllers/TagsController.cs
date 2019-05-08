@@ -1,12 +1,10 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Panda.API.Data;
 using Panda.API.Data.Models;
+using Panda.API.Interfaces;
 using Panda.API.ViewModels;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Panda.API.Controllers
@@ -15,70 +13,41 @@ namespace Panda.API.Controllers
     [ApiController]
     public class TagsController : ControllerBase
     {
-        private ApplicationDbContext _context;
-        private User _user;
+        private readonly User _user;
+        private readonly ITagService _tagService;
+        private readonly IRelationAnalyticsService _relationAnalyticsService;
 
-        public TagsController(ApplicationDbContext context, IHttpContextAccessor http)
+        public TagsController(IHttpContextAccessor http, ITagService tagService, IRelationAnalyticsService relationAnalyticsService)
         {
-            _context = context;
             _user = (User)http.HttpContext.Items["ApplicationUser"];
+            _tagService = tagService;
+            _relationAnalyticsService = relationAnalyticsService;
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Tag>>> Get()
+        public async Task<ActionResult<List<TagViewModel>>> Get()
         {
-            List<Tag> tags = await _context.Transactions
-                .Where(t => t.User.Id == _user.Id)
-                .Include(t => t.TransactionTags)
-                .ThenInclude(t => t.Tag)
-                .Select(t => t.TransactionTags.Select(x => x.Tag)) // get the tags
-                .SelectMany(t => t) // flatten
-                .OrderBy(t => t.Name)
-                .Distinct()
-                .ToListAsync();
-
-            return Ok(tags);
+            var tags = await _tagService.GetTagsForUserTransactions(_user.Id);
+            return Mapper.Map<List<TagViewModel>>(tags);
         }
 
         [HttpPost]
-        public async Task<ActionResult<Tag>> Post([FromBody] Tag tag)
+        public async Task<ActionResult<TagViewModel>> Post([FromBody] TagViewModel tagModel)
         {
             if (!ModelState.IsValid)
             {
                 return UnprocessableEntity(ModelState);
             }
 
-            var existingTag = await _context.Tags.Where(c => c.Name == tag.Name).FirstOrDefaultAsync();
-            if (existingTag != null)
-            {
-                return Ok(existingTag);
-            }
-
-            _context.Tags.Add(tag);
-            await _context.SaveChangesAsync();
-            return Ok(tag);
+            var tag = await _tagService.CreateTag(Mapper.Map<Tag>(tagModel));
+            return Mapper.Map<TagViewModel>(tag);
         }
 
         [HttpGet]
         [Route("{id}/Analytics")]
         public async Task<RelationAnalyticsViewModel> Analytics(int id)
         {
-            IQueryable<Transaction> transactions = _context.Transactions.Where(t => t.User.Id == _user.Id && t.TransactionTags.Where(p => p.Tag.Id == id).Any());
-
-            int lifetimeCount = await transactions.CountAsync();
-            decimal lifetimeTotal = await transactions.Select(t => t.Amount).SumAsync();
-            int monthCount = await transactions.Where(t => t.Date > DateTime.Now.AddDays(-30)).CountAsync();
-            decimal monthTotal = await transactions.Where(t => t.Date > DateTime.Now.AddDays(-30)).Select(t => t.Amount).SumAsync();
-
-            return new RelationAnalyticsViewModel()
-            {
-                LifetimeTotalTransactions = lifetimeCount,
-                LifetimeSumOfTransactions = lifetimeTotal,
-                LifetimeAveragePerTransaction = lifetimeCount > 0 ? lifetimeTotal / lifetimeCount : 0,
-                MonthTotalTransactions = monthCount,
-                MonthSumOfTransactions = monthTotal,
-                MonthAveragePerTransaction = monthCount > 0 ? monthTotal / monthCount : 0
-            };
+            return await _relationAnalyticsService.GetRelationAnalytics<Tag>(_user.Id, id);
         }
     }
 }

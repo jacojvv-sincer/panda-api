@@ -1,12 +1,10 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Panda.API.Data;
 using Panda.API.Data.Models;
+using Panda.API.Interfaces;
 using Panda.API.ViewModels;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Panda.API.Controllers
@@ -15,69 +13,41 @@ namespace Panda.API.Controllers
     [ApiController]
     public class PeopleController : ControllerBase
     {
-        private ApplicationDbContext _context;
-        private User _user;
+        private readonly User _user;
+        private readonly IPersonService _personService;
+        private readonly IRelationAnalyticsService _relationAnalyticsService;
 
-        public PeopleController(ApplicationDbContext context, IHttpContextAccessor http)
+        public PeopleController(IHttpContextAccessor http, IRelationAnalyticsService relationAnalyticsService, IPersonService personService)
         {
-            _context = context;
             _user = (User)http.HttpContext.Items["ApplicationUser"];
+            _personService = personService;
+            _relationAnalyticsService = relationAnalyticsService;
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Person>>> Get()
+        public async Task<ActionResult<List<PersonViewModel>>> Get()
         {
-            List<Person> people = await _context.Transactions
-                .Where(t => t.User.Id == _user.Id)
-                .Include(t => t.TransactionPeople)
-                .Select(t => t.TransactionPeople.Select(x => x.Person))
-                .SelectMany(p => p) // flatten
-                .OrderBy(p => p.Name)
-                .Distinct()
-                .ToListAsync();
-
-            return Ok(people);
+            var people = await _personService.GetPeopleForUserTransactions(_user.Id);
+            return Ok(Mapper.Map<List<PersonViewModel>>(people));
         }
 
         [HttpPost]
-        public async Task<ActionResult<Person>> Post([FromBody] Person person)
+        public async Task<ActionResult<PersonViewModel>> Post([FromBody] PersonViewModel personModel)
         {
             if (!ModelState.IsValid)
             {
                 return UnprocessableEntity(ModelState);
             }
 
-            var existingPerson = await _context.People.Where(c => c.Name == person.Name).FirstOrDefaultAsync();
-            if (existingPerson != null)
-            {
-                return Ok(existingPerson);
-            }
-
-            _context.People.Add(person);
-            await _context.SaveChangesAsync();
-            return Ok(person);
+            var person = await _personService.CreatePerson(Mapper.Map<Person>(personModel));
+            return Ok(Mapper.Map<PersonViewModel>(person));
         }
 
         [HttpGet]
         [Route("{id}/Analytics")]
         public async Task<RelationAnalyticsViewModel> Analytics(int id)
         {
-            IQueryable<Transaction> transactions = _context.Transactions.Where(t => t.User.Id == _user.Id && t.TransactionPeople.Where(p => p.Person.Id == id).Any());
-
-            int lifetimeCount = await transactions.CountAsync();
-            decimal lifetimeTotal = await transactions.Select(t => t.Amount).SumAsync();
-            int monthCount = await transactions.Where(t => t.Date > DateTime.Now.AddDays(-30)).CountAsync();
-            decimal monthTotal = await transactions.Where(t => t.Date > DateTime.Now.AddDays(-30)).Select(t => t.Amount).SumAsync();
-
-            return new RelationAnalyticsViewModel()
-            {
-                LifetimeTotalTransactions = lifetimeCount,
-                LifetimeSumOfTransactions = lifetimeTotal,
-                LifetimeAveragePerTransaction = lifetimeCount > 0 ? lifetimeTotal / lifetimeCount : 0,
-                MonthTotalTransactions = monthCount,
-                MonthSumOfTransactions = monthTotal,
-                MonthAveragePerTransaction = monthCount > 0 ? monthTotal / monthCount : 0
-            };
+            return await _relationAnalyticsService.GetRelationAnalytics<Person>(_user.Id, id);
         }
     }
 }

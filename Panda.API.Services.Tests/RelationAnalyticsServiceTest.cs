@@ -3,16 +3,15 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Panda.API.Data;
 using Panda.API.Data.Models;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Panda.API.Services.Tests
 {
     [TestClass]
-    public class CategoryServiceTests
+    public class RelationAnalyticsServiceTest
     {
         private ApplicationDbContext _applicationDbContext { get; set; }
-        private CategoryService _categoryService { get; set; }
+        private RelationAnalyticsService _relationAnalyticsService { get; set; }
 
         private User user;
         private static Guid userId = Guid.NewGuid();
@@ -40,14 +39,15 @@ namespace Panda.API.Services.Tests
             {
                 User = user,
                 Amount = -12,
-                Category = groceriesCategory
+                Category = groceriesCategory,
+                Date = DateTime.Now
             };
             _applicationDbContext.Transactions.Add(userTransaction);
 
             //Save changes
             _applicationDbContext.SaveChanges();
 
-            _categoryService = new CategoryService(_applicationDbContext);
+            _relationAnalyticsService = new RelationAnalyticsService(_applicationDbContext);
         }
 
         [TestCleanup]
@@ -57,25 +57,15 @@ namespace Panda.API.Services.Tests
         }
 
         [TestMethod]
-        public async Task GetCategoriesForUserTransactions_Should_ReturnAllCategoriesForUserTransactions()
+        public async Task GetRelationAnalytics_Should_ReturnCorrectDataForTheCategoryRelation()
         {
-            var categories = await _categoryService.GetCategoriesForUserTransactions(userId);
-            Assert.AreEqual(1, categories.Count);
-            Assert.AreEqual("Groceries", categories.First().Name);
-        }
-
-        [TestMethod]
-        public async Task CreateCategory_Should_PersistTheCategoryToTheDatabase()
-        {
-            var category = await _categoryService.CreateCategory(new Category() { Name = "NewCategory" });
-            Assert.AreEqual(1, _applicationDbContext.Categories.Where(c => c.Name == "NewCategory").Count());
-        }
-
-        [TestMethod]
-        public async Task CreateCategory_Should_ReturnExistingCategoriesUponSameCreation()
-        {
-            var category = await _categoryService.CreateCategory(groceriesCategory);
-            Assert.AreEqual(category.Id, groceriesCategory.Id);
+            var analytics = await _relationAnalyticsService.GetRelationAnalytics<Category>(userId, groceriesCategory.Id);
+            Assert.AreEqual(-12, analytics.LifetimeAveragePerTransaction);
+            Assert.AreEqual(-12, analytics.LifetimeSumOfTransactions);
+            Assert.AreEqual(1, analytics.LifetimeTotalTransactions);
+            Assert.AreEqual(-12, analytics.MonthSumOfTransactions);
+            Assert.AreEqual(-12, analytics.MonthAveragePerTransaction);
+            Assert.AreEqual(1, analytics.MonthTotalTransactions);
         }
     }
 }

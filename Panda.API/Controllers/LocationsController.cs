@@ -1,12 +1,10 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Panda.API.Data;
 using Panda.API.Data.Models;
+using Panda.API.Interfaces;
 using Panda.API.ViewModels;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Panda.API.Controllers
@@ -15,66 +13,41 @@ namespace Panda.API.Controllers
     [ApiController]
     public class LocationsController : ControllerBase
     {
-        private ApplicationDbContext _context;
-        private User _user;
+        private readonly User _user;
+        private readonly ILocationService _locationService;
+        private readonly IRelationAnalyticsService _relationAnalyticsService;
 
-        public LocationsController(ApplicationDbContext context, IHttpContextAccessor http)
+        public LocationsController(IHttpContextAccessor http, IRelationAnalyticsService relationAnalyticsService, ILocationService locationService)
         {
-            _context = context;
             _user = (User)http.HttpContext.Items["ApplicationUser"];
+            _locationService = locationService;
+            _relationAnalyticsService = relationAnalyticsService;
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Location>>> Get()
+        public async Task<ActionResult<List<LocationViewModel>>> Get()
         {
-            return Ok(await _context.Transactions
-                .Where(t => t.User.Id == _user.Id)
-                .Include(t => t.Location)
-                .Select(t => t.Location)
-                .OrderBy(l => l.Name)
-                .Distinct()
-                .ToListAsync());
+            var locations = await _locationService.GetLocationsForUserTransactions(_user.Id);
+            return Mapper.Map<List<LocationViewModel>>(locations);
         }
 
         [HttpPost]
-        public async Task<ActionResult<Location>> Post([FromBody] Location location)
+        public async Task<ActionResult<LocationViewModel>> Post([FromBody] LocationViewModel locationModel)
         {
             if (!ModelState.IsValid)
             {
                 return UnprocessableEntity(ModelState);
             }
 
-            var existingLocation = await _context.Locations.Where(c => c.Name == location.Name).FirstOrDefaultAsync();
-            if (existingLocation != null)
-            {
-                return Ok(existingLocation);
-            }
-
-            _context.Locations.Add(location);
-            await _context.SaveChangesAsync();
-            return Ok(location);
+            var location = await _locationService.CreateLocation(Mapper.Map<Location>(locationModel));
+            return Ok(Mapper.Map<LocationViewModel>(location));
         }
 
         [HttpGet]
         [Route("{id}/Analytics")]
         public async Task<RelationAnalyticsViewModel> Analytics(int id)
         {
-            IQueryable<Transaction> transactions = _context.Transactions.Where(t => t.User.Id == _user.Id && t.Location.Id == id);
-
-            int lifetimeCount = await transactions.CountAsync();
-            decimal lifetimeTotal = await transactions.Select(t => t.Amount).SumAsync();
-            int monthCount = await transactions.Where(t => t.Date > DateTime.Now.AddDays(-30)).CountAsync();
-            decimal monthTotal = await transactions.Where(t => t.Date > DateTime.Now.AddDays(-30)).Select(t => t.Amount).SumAsync();
-
-            return new RelationAnalyticsViewModel()
-            {
-                LifetimeTotalTransactions = lifetimeCount,
-                LifetimeSumOfTransactions = lifetimeTotal,
-                LifetimeAveragePerTransaction = lifetimeCount > 0 ? lifetimeTotal / lifetimeCount : 0,
-                MonthTotalTransactions = monthCount,
-                MonthSumOfTransactions = monthTotal,
-                MonthAveragePerTransaction = monthCount > 0 ? monthTotal / monthCount : 0
-            };
+            return await _relationAnalyticsService.GetRelationAnalytics<Location>(_user.Id, id);
         }
     }
 }

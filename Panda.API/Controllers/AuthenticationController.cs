@@ -7,7 +7,7 @@ namespace Panda.API.Controllers
 {
     public class AuthenticationBinding
     {
-        public string url { get; set; }
+        public string Url { get; set; }
     }
 
     [Route("api/[controller]")]
@@ -26,7 +26,7 @@ namespace Panda.API.Controllers
         [HttpPost]
         public async Task<string> Post([FromBody] AuthenticationBinding model)
         {
-            var response = await _client.PostAsync($"{model.url}{_configuration["AzureAdB2C:Secret"]}", null);
+            var response = await _client.PostAsync($"{model.Url}{_configuration["AzureAdB2C:Secret"]}", null);
             return await response.Content.ReadAsStringAsync();
         }
     }

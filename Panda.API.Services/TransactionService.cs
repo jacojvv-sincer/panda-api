@@ -48,6 +48,10 @@ namespace Panda.API.Services
                                                      .ThenByDescending(t => t.Id)
                                                      .Include(t => t.Category)
                                                      .Include(t => t.Location)
+                                                     .Include(t => t.TransactionTags)
+                                                     .ThenInclude(x => x.Tag)
+                                                     .Include(t => t.TransactionPeople)
+                                                     .ThenInclude(p => p.Person)
                                                      .Skip((page - 1) * perPage)
                                                      .Take(perPage);
 
@@ -64,7 +68,14 @@ namespace Panda.API.Services
         /// <returns></returns>
         public async Task<Transaction> GetUserTransactionById(Guid userId, int id)
         {
-            return await _context.Transactions.Where(t => t.User.Id == userId && t.Id == id).FirstOrDefaultAsync();
+            return await _context.Transactions.Where(t => t.User.Id == userId && t.Id == id)
+                                              .Include(t => t.Category)
+                                              .Include(t => t.Location)
+                                              .Include(t => t.TransactionTags)
+                                              .ThenInclude(x => x.Tag)
+                                              .Include(t => t.TransactionPeople)
+                                              .ThenInclude(p => p.Person)
+                                              .FirstOrDefaultAsync();
         }
 
         /// <summary>

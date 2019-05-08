@@ -10,12 +10,11 @@ namespace Panda.API.ViewModels
         public string Label { get; set; }
         public string Notes { get; set; }
         public DateTime Date { get; set; }
-        public Boolean IsExtraneous { get; set; }
+        public bool IsExtraneous { get; set; }
         public decimal Amount { get; set; }
-        public User User { get; set; }
-        public Category Category { get; set; }
-        public Location Location { get; set; }
-        public ICollection<TransactionTag> TransactionTags { get; set; }
-        public ICollection<TransactionPerson> TransactionPeople { get; set; }
+        public CategoryViewModel Category { get; set; }
+        public LocationViewModel Location { get; set; }
+        public List<TransactionTagViewModel> TransactionTags { get; set; }
+        public List<TransactionPersonViewModel> TransactionPeople { get; set; }
     }
 }

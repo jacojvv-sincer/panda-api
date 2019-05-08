@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Panda.API.Data;
 using Panda.API.Data.Models;
 using Panda.API.Exceptions;
 using Panda.API.Interfaces;
@@ -40,14 +39,16 @@ namespace Panda.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Transaction>> Post([FromBody] AddTransactionViewModel transaction)
+        public async Task<ActionResult<Transaction>> Post([FromBody] AddTransactionViewModel transactionModel)
         {
             if (!ModelState.IsValid)
             {
                 return UnprocessableEntity(ModelState);
             }
 
-            return Ok(AutoMapper.Mapper.Map<TransactionViewModel>(await _transactionService.SaveTransaction(_user, transaction)));
+            var transaction = await _transactionService.SaveTransaction(_user, transactionModel);
+
+            return Ok(AutoMapper.Mapper.Map<TransactionViewModel>(transaction));
         }
 
         [HttpPut]

@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using CsvHelper;
+﻿using CsvHelper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Panda.API.Data;
 using Panda.API.Data.Models;
 using Panda.API.DataTransferObjects;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Panda.API.Controllers
 {
@@ -17,15 +17,14 @@ namespace Panda.API.Controllers
     [ApiController]
     public class ImportsController : ControllerBase
     {
-        private ApplicationDbContext _context;
-        private User _user;
+        private readonly ApplicationDbContext _context;
+        private readonly User _user;
 
         public ImportsController(ApplicationDbContext context, IHttpContextAccessor http)
         {
             _context = context;
             _user = (User)http.HttpContext.Items["ApplicationUser"];
         }
-
 
         [HttpPost]
         [Route("UploadCsv")]

@@ -8,7 +8,6 @@ namespace Panda.API.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        // GET api/values
         [HttpGet]
         [Authorize]
         public ActionResult<User> Get()
